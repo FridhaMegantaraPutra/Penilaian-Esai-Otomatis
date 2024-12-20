@@ -1,0 +1,9 @@
+project/
+├── app.py
+├── requirements.txt
+├── static/
+│   ├── style.css
+├── templates/
+│   ├── index.html
+└── utils/
+    └── text_processing.py

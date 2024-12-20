@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Essay Evaluation</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Essay Evaluation Tool</h1>
+      <form
+        id="evaluation-form"
+        method="POST"
+        action="/evaluate"
+        onsubmit="return submitForm(event);">
+        <label for="reference-essay">Reference Essay:</label>
+        <textarea
+          id="reference-essay"
+          name="reference_essay"
+          rows="5"
+          required></textarea>
+
+        <label for="student-essay">Student Essay:</label>
+        <textarea
+          id="student-essay"
+          name="student_essay"
+          rows="5"
+          required></textarea>
+
+        <button type="submit">Evaluate</button>
+      </form>
+
+      <div id="result" style="display: none">
+        <h2>Result:</h2>
+        <p>
+          <strong>Cosine Similarity:</strong>
+          <span id="cosine-similarity"></span>
+        </p>
+        <p><strong>Score:</strong> <span id="score"></span></p>
+      </div>
+    </div>
+
+    <script>
+      async function submitForm(event) {
+        event.preventDefault();
+        const form = document.getElementById("evaluation-form");
+        const formData = new FormData(form);
+
+        const response = await fetch("/evaluate", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            reference_essay: formData.get("reference_essay"),
+            student_essay: formData.get("student_essay"),
+          }),
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          document.getElementById("cosine-similarity").textContent =
+            result.cosine_similarity;
+          document.getElementById("score").textContent = result.score;
+          document.getElementById("result").style.display = "block";
+        } else {
+          alert("Error evaluating essay. Please try again.");
+        }
+      }
+    </script>
+  </body>
+</html>
